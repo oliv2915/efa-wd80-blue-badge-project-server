@@ -12,6 +12,16 @@ const Recipe = db.define("recipe", {
             }
         }
     },
+    recipeType: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                args: true,
+                msg: "Must have a receipe type"
+            }
+        }
+    },
     description: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -43,7 +53,7 @@ const Recipe = db.define("recipe", {
         }
     },
     prepTime: {
-        type: DataTypes.STRING,
+        type: DataTypes.TIME,
         allowNull: false,
         validate: {
             notEmpty: {
