@@ -66,8 +66,8 @@ const User = db.define("user", {
             }
         }
     },
-    profileImageId: {
-        type: DataTypes.STRING
+    profileImageJSON: {
+        type: DataTypes.JSON
     },
     aboutMe: {
         type: DataTypes.TEXT
