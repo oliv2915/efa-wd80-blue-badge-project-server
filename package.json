@@ -1,0 +1,44 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "develop": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oliv2915/efa-wd80-blue-badge-project-server.git"
+  },
+  "contributors": [
+    {
+      "name": "Brian Toombs"
+    },
+    {
+      "name": "Katana Yaa"
+    },
+    {
+      "name": "Brian Oliver II",
+      "email": "brian.d.oliver@icloud.com",
+      "url": "brianoliver.me"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oliv2915/efa-wd80-blue-badge-project-server/issues"
+  },
+  "homepage": "https://github.com/oliv2915/efa-wd80-blue-badge-project-server#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
