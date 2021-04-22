@@ -8,7 +8,7 @@ const middlewares = require("./middleware");
 app.use(middlewares.CORS);
 app.use(Express.json());
 
-// app.use("/user", controllers.userController);
+app.use("/user", controllers.userController);
 // app.use("/recipe", controllers.recipeController);
 
 dbConnection.authenticate()
