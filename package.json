@@ -21,7 +21,7 @@
     {
       "name": "Brian Oliver II",
       "email": "brian.d.oliver@icloud.com",
-      "url": "brianoliver.me"
+      "url": "http://brianoliver.me"
     }
   ],
   "license": "ISC",
@@ -31,6 +31,7 @@
   "homepage": "https://github.com/oliv2915/efa-wd80-blue-badge-project-server#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cloudinary": "^1.25.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",

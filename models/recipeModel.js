@@ -75,6 +75,9 @@ const Recipe = db.define("recipe", {
     draft: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
+    },
+    recipeImageId: {
+        type: DataTypes.STRING
     }
     
 },);
