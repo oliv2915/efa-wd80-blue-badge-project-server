@@ -19,7 +19,7 @@ router.post("/signup", async (req, res) => {
         password must be greater then 6 characters. Password must contain a number and special character - validatePassword
     */
     const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
-    const validatePassword = new RegExp("^.*(?=.{4,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
+    const validatePassword = new RegExp("^.*(?=.{6,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
     // if username does not match our requirements, return an error.
     if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."})
     // if password does not match our requirements, return an error
