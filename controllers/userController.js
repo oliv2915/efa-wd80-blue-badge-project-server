@@ -15,8 +15,8 @@ router.post("/signup", async (req, res) => {
     if (password !== confirmPassword) return res.status(400).json({message: "Passwords do not match"})
     /*
                             Username and Password Validation Checks
-        username must be greater than 4 characters. One character must be a number or special character
-        password must be greater then 6 characters. Password must contain a number and special character
+        username must be greater than 4 characters. One character must be a number or special character - validateUserName
+        password must be greater then 6 characters. Password must contain a number and special character - validatePassword
     */
     const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
     const validatePassword = new RegExp("^.*(?=.{4,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
