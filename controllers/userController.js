@@ -37,9 +37,12 @@ router.post("/signup", async (req, res) => {
             firstName,
             lastName
         });
+        
+        // create a sessionToken for the user
+        const token = jwt.sign({id: createdUser.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24});
 
         return res.status(201).json({ // return a sterile user object based on the createdUser
-            message: "User has signed in successfully!",
+            message: "User account created successfully",
             user: {
                 id: createdUser.id,
                 username: createdUser.username,
@@ -48,6 +51,7 @@ router.post("/signup", async (req, res) => {
                 lastName: createdUser.lastName,
                 createdAt: createdUser.createdAt
             },
+            sessionToken: token
         });
     } catch (err) {
         if (err instanceof UniqueConstraintError) {
@@ -56,8 +60,51 @@ router.post("/signup", async (req, res) => {
             return res.status(400).json({message: err.message})
         } else {
             return res.status(500).json({message: "Failed to sign up"});
-
         }
+    }
+});
+
+router.post("/login", async (req, res) => {
+    // get access to username and password properties for our user
+    const {username, password} = req.body.user;
+    // check to see if the username and password are empty, if they are, return a message
+    if (!username || !password) return res.status(400).json({message: "Username and Password are required"});
+    // try to location a user with the provided username
+    try {
+        const foundUser = await UserModel.findOne({
+            where: {
+                username: username
+            }
+        });
+        // if we did not find a user, invalid login attempt, return a message
+        if (!foundUser) return res.status(401).json({message: "Username and/or password provided is incorrect"});
+        // if we reached this point, we found a user, lets check to see if the user password matches the foundUser.password
+        const passwordsMatch = await bcrypt.compare(password, foundUser.password);
+        // if passwords don't match, invalid login attempt, return a message
+        if (!passwordsMatch) return res.status(401).json({message: "Username and/or password provided is incorrect"});
+        // at this point, user has passed on attempt to deny them access, let them have access
+        // create a session token
+        const token = jwt.sign({id: foundUser.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24});
+        // return a json resonse with message, sterile user obj, and a sessionToken
+        return res.status(200).json({
+            message: "User logged in successfully",
+            user: {
+                id: foundUser.id,
+                username: foundUser.username,
+                email: foundUser.email,
+                firstName: foundUser.firstName,
+                lastName: foundUser.lastName
+            },
+            sessionToken: token
+        });
+    } catch (err) {
+        if (err instanceof UniqueConstraintError) {
+            return res.status(400).json({message: "Username and/or Email are already in use"})
+         } else if(err instanceof ValidationError) {
+             return res.status(400).json({message: err.message})
+         } else {
+             return res.status(500).json({message: "Failed to sign up"});
+         }
     }
 });
 

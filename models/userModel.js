@@ -10,10 +10,6 @@ const User = db.define("user", {
             notEmpty: {
                 args: true,
                 msg: "Username is required"
-            },
-            min: {
-                args: 4,
-                msg: "Username must be a minimum of 4 characters long"
             }
         }
     },
@@ -39,10 +35,6 @@ const User = db.define("user", {
             notEmpty: {
                 args: true,
                 msg: "Password is required"
-            },
-            min: {
-                args: 6,
-                msg: "Password must be a minimum of 6 characters long"
             }
         }
     },
