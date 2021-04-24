@@ -188,6 +188,7 @@ router.get("/profile", validateSession, async (req, res) => {
         });
         res.json(cleanProfile)
     } catch (err) {
+        console.log(err)
         return res.status(500).json({message: "Unable to get your profile"});
     }
 })
@@ -200,7 +201,7 @@ router.put('/update/', validateSession, async (req, res) => {
     // check to see if we have the required fields
     if (!username || !email || !password || !confirmPassword || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, Confirm Password, First Name, and Last Name are required"});
     // check to see if the passwords match
-    if (password !== confirmPassword) return res.status(400).json({message: "Passwords do not match"})
+    if (password !== confirmPassword) return res.status(400).json({message: "Passwords do not match"});
     /*
                             Username and Password Validation Checks
         username must be greater than 4 characters. One character must be a number or special character - validateUserName
@@ -209,9 +210,9 @@ router.put('/update/', validateSession, async (req, res) => {
     const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
     const validatePassword = new RegExp("^.*(?=.{6,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
     // if username does not match our requirements, return an error.
-    if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."})
+    if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."});
     // if password does not match our requirements, return an error
-    if (!validatePassword.test(password)) return res.status(400).json({message: "Password must be a mimimum of 6 characters, have one number, and one special character"})
+    if (!validatePassword.test(password)) return res.status(400).json({message: "Password must be a mimimum of 6 characters, have one number, and one special character"});
 
     try {
         const query = {  // Query object targeting owner of the record.
@@ -220,7 +221,7 @@ router.put('/update/', validateSession, async (req, res) => {
             }
         };
         // Need to find current user in database
-        const foundUser = await UserModel.findOne(query)
+        const foundUser = await UserModel.findOne(query);
         
         const userDataToBeUpdated = {   // Self explanatory
             username: (username === foundUser.username) ? foundUser.username : username,
@@ -235,9 +236,9 @@ router.put('/update/', validateSession, async (req, res) => {
         return res.status(200).json(update);
     } catch (err) {
         if (err instanceof UniqueConstraintError) {
-            return res.status(400).json({message: "Username and/or Email are already in use"})
+            return res.status(400).json({message: "Username and/or Email are already in use"});
          } else if(err instanceof ValidationError) {
-             return res.status(400).json({message: err.message})
+             return res.status(400).json({message: err.message});
          } else {
              return res.status(500).json({message: "Failed to sign up"});
          }
