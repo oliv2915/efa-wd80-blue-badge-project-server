@@ -58,8 +58,8 @@ const User = db.define("user", {
             }
         }
     },
-    profileImageJSON: {
-        type: DataTypes.JSON
+    profileImageURL: {
+        type: DataTypes.STRING
     },
     aboutMe: {
         type: DataTypes.TEXT

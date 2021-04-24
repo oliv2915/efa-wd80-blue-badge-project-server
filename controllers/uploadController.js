@@ -28,7 +28,7 @@ router.post("/", validateSession, async (req, res) => {
             // upload file to cloudinary and update the user recod with the cloudinary data
             const imageUploadResponse = await uploadImage(image.data);
             // submit the update
-            await UserModel.update({profileImageJSON: imageUploadResponse},
+            await UserModel.update({profileImageURL: imageUploadResponse.secure_url},
                 {where: {username: req.user.username}}
             );
             // return the result
@@ -44,7 +44,7 @@ router.post("/", validateSession, async (req, res) => {
             // upload the image to cloudinary
             const imageUploadResponse = await uploadImage(image.data);
             // update recipe with the imageUploadResponse Data
-            await RecipeModel.update({recipeImageJSON: imageUploadResponse},
+            await RecipeModel.update({recipeImageURL: imageUploadResponse.secure_url},
                 {where: {id: req.query.recipe, userId: req.user.id}}
             );
             // return a message
