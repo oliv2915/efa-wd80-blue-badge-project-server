@@ -112,7 +112,7 @@ router.post("/login", async (req, res) => {
     }
 });
 /*
-    Get profile by username
+    Get user profile by username (public)
 */
 router.get("/profile/:username", async (req, res) => {
     // get access to the username
@@ -191,50 +191,57 @@ router.get("/profile", validateSession, async (req, res) => {
         return res.status(500).json({message: "Unable to get your profile"});
     }
 })
-
+/*
+    Update User (private)
+*/
 router.put('/update/', validateSession, async (req, res) => {
-    let {username, email, password, confirmPassword, firstName, lastName, profileImageJSON} = req.body.user;
+    // get access to the information that will be passed
+    let {username, email, password, confirmPassword, firstName, lastName, aboutMe} = req.body.user;
+    // check to see if we have the required fields
     if (!username || !email || !password || !confirmPassword || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, Confirm Password, First Name, and Last Name are required"});
+    // check to see if the passwords match
     if (password !== confirmPassword) return res.status(400).json({message: "Passwords do not match"})
-
     /*
                             Username and Password Validation Checks
         username must be greater than 4 characters. One character must be a number or special character - validateUserName
         password must be greater then 6 characters. Password must contain a number and special character - validatePassword
     */
-        const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
-        const validatePassword = new RegExp("^.*(?=.{6,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
-        // if username does not match our requirements, return an error.
-        if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."})
-        // if password does not match our requirements, return an error
-        if (!validatePassword.test(password)) return res.status(400).json({message: "Password must be a mimimum of 6 characters, have one number, and one special character"})
+    const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
+    const validatePassword = new RegExp("^.*(?=.{6,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
+    // if username does not match our requirements, return an error.
+    if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."})
+    // if password does not match our requirements, return an error
+    if (!validatePassword.test(password)) return res.status(400).json({message: "Password must be a mimimum of 6 characters, have one number, and one special character"})
 
-        try {
-
-        const query = {  //Query object targeting owner of the record.
+    try {
+        const query = {  // Query object targeting owner of the record.
             where: {
                 id: req.user.id
             }
         };
         // Need to find current user in database
         const foundUser = await UserModel.findOne(query)
-        // Check to see if use is found
-        if (!foundUser) return res.status(409).json({message: "No user record to update"})
-
+        
         const userDataToBeUpdated = {   // Self explanatory
             username: (username === foundUser.username) ? foundUser.username : username,
             email: (email === foundUser.email) ? foundUser.email : email,
             password: await bcrypt.compare(password, foundUser.password) ? foundUser.password : bcrypt.hashSync(password, 13),
             firstName: (firstName === foundUser.firstName) ? foundUser.firstName : firstName,
-            lastName: (lastName === foundUser.lastName) ? foundUser.lastName : lastName
+            lastName: (lastName === foundUser.lastName) ? foundUser.lastName : lastName,
+            aboutMe: (aboutMe === foundUser.aboutMe) ? foundUser.aboutMe : aboutMe
         };
 
-            const update = await UserModel.update(userDataToBeUpdated, query);
-            res.status(200).json(update);
-        } catch (err) {
-            console.log(err)
-            res.status(500).json({error: err});
-        }
+        const update = await UserModel.update(userDataToBeUpdated, query);
+        return res.status(200).json(update);
+    } catch (err) {
+        if (err instanceof UniqueConstraintError) {
+            return res.status(400).json({message: "Username and/or Email are already in use"})
+         } else if(err instanceof ValidationError) {
+             return res.status(400).json({message: err.message})
+         } else {
+             return res.status(500).json({message: "Failed to sign up"});
+         }
+    }
 });
 
 module.exports = router

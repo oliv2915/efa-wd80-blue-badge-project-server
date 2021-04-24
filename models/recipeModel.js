@@ -76,7 +76,7 @@ const Recipe = db.define("recipe", {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     },
-    recipeImageJSON: {
+    recipeImageURL: {
         type: DataTypes.JSON
     }
     
