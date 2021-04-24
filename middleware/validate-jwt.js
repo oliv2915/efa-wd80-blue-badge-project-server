@@ -14,7 +14,7 @@ const validateJWT = async (req, res, next) => {
         if (!payload) return res.status(401).json({message: "Not Authorized"});  // if payload is invalid, deny access
             
         let foundUser = await UserModel.findOne({ // attempt to find a user based on the payload data
-            where: {id: payload.id, username: payload.username}
+            where: {username: payload.username}
         });
         
         if (!foundUser) return res.status(401).json({message: "Not Authorized"}); // if no user found, deny access

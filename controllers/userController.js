@@ -3,12 +3,12 @@ const { UserModel} = require("../models");
 const { UniqueConstraintError, ValidationError } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const validateSession = require("../middleware");
+const {validateSession} = require("../middleware");
 
 
 router.post("/signup", async (req, res) => {
     // get access to all the properties that we will need to create a user
-    let {username, email, password, confirmPassword, firstName, lastName} = req.body.user;
+    const {username, email, password, confirmPassword, firstName, lastName} = req.body.user;
     // check to see if the required fields have values, this is defined by the UserModel
     if (!username || !email || !password || !confirmPassword || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, Confirm Password, First Name, and Last Name are required"});
     // check to see if passwords and confirmPassword match, if not return a message
@@ -39,7 +39,7 @@ router.post("/signup", async (req, res) => {
         });
         
         // create a sessionToken for the user
-        const token = jwt.sign({id: createdUser.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24});
+        const token = jwt.sign({username: createdUser.username}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24});
 
         return res.status(201).json({ // return a sterile user object based on the createdUser
             message: "User account created successfully",
@@ -84,7 +84,7 @@ router.post("/login", async (req, res) => {
         if (!passwordsMatch) return res.status(401).json({message: "Username and/or password provided is incorrect"});
         // at this point, user has passed on attempt to deny them access, let them have access
         // create a session token
-        const token = jwt.sign({id: foundUser.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24});
+        const token = jwt.sign({username: foundUser.username}, process.env.JWT_SECRET, {expiresIn: 60 * 60 * 24});
         // return a json resonse with message, sterile user obj, and a sessionToken
         return res.status(200).json({
             message: "User logged in successfully",
@@ -103,7 +103,7 @@ router.post("/login", async (req, res) => {
          } else if(err instanceof ValidationError) {
              return res.status(400).json({message: err.message})
          } else {
-             return res.status(500).json({message: "Failed to sign up"});
+             return res.status(500).json({message: "Failed to login"});
          }
     }
 });
