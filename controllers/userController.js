@@ -129,7 +129,7 @@ router.get("/profile/:username", async (req, res) => {
             username: foundProfile.username,
             email: foundProfile.email,
             aboutMe: foundProfile.aboutMe,
-            profileImageJSON: foundProfile.profileImageJSON,
+            profileImageURL: foundProfile.profileImageURL,
             recipes: []
         }
         // loop thru each ingredient and remove meta data fields
@@ -144,7 +144,7 @@ router.get("/profile/:username", async (req, res) => {
                 prepTime: recipe.prepTime,
                 ingredients: recipe.ingredients,
                 draft: recipe.draft,
-                recipeImageJSON: recipe.recipeImageJSON
+                recipeImageURL: recipe.recipeImageURL
             })
         });
         res.json(cleanProfile)
@@ -168,7 +168,7 @@ router.get("/profile", validateSession, async (req, res) => {
             username: foundProfile.username,
             email: foundProfile.email,
             aboutMe: foundProfile.aboutMe,
-            profileImageJSON: foundProfile.profileImageJSON,
+            profileImageURL: foundProfile.profileImageURL,
             recipes: []
         }
         // loop thru each ingredient and remove meta data fields
@@ -183,7 +183,7 @@ router.get("/profile", validateSession, async (req, res) => {
                 prepTime: recipe.prepTime,
                 ingredients: recipe.ingredients,
                 draft: recipe.draft,
-                recipeImageJSON: recipe.recipeImageJSON
+                recipeImageURL: recipe.recipeImageURL
             })
         });
         res.json(cleanProfile)
