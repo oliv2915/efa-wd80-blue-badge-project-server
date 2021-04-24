@@ -1,11 +1,13 @@
 const router = require("express").Router();
-const { UserModel} = require("../models");
+const { UserModel, RecipeModel} = require("../models");
 const { UniqueConstraintError, ValidationError } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {validateSession} = require("../middleware");
 
-
+/*
+    Add user
+*/
 router.post("/signup", async (req, res) => {
     // get access to all the properties that we will need to create a user
     const {username, email, password, confirmPassword, firstName, lastName} = req.body.user;
@@ -63,7 +65,9 @@ router.post("/signup", async (req, res) => {
         }
     }
 });
-
+/* 
+    Login User
+*/
 router.post("/login", async (req, res) => {
     // get access to username and password properties for our user
     const {username, password} = req.body.user;
@@ -107,5 +111,46 @@ router.post("/login", async (req, res) => {
          }
     }
 });
+/*
+    Get userprofile by username
+*/
+router.get("/profile/:username", async (req, res) => {
+    // get access to the username
+    const {username} = req.params;
+
+    try {
+        // find user record with recipes
+        const foundProfile = await UserModel.findOne({where:{username: username}, include: RecipeModel});
+        // build an cleanProfile that has the password and meta data fields removed
+        const cleanProfile = {
+            id: foundProfile.id,
+            firstName: foundProfile.firstName,
+            lastName: foundProfile.lastName,
+            username: foundProfile.username,
+            email: foundProfile.email,
+            aboutMe: foundProfile.aboutMe,
+            profileImageJSON: foundProfile.profileImageJSON,
+            recipes: []
+        }
+        // loop thru each ingredient and remove meta data fields
+        foundProfile.recipes.map((recipe) => {
+            if (!recipe.draft) cleanProfile.recipes.push({
+                id: recipe.id,
+                recipeName: recipe.recipeName,
+                recipeType: recipe.recipeType,
+                description: recipe.description,
+                cookingDirections: recipe.cookingDirections,
+                servings: recipe.servings,
+                prepTime: recipe.prepTime,
+                ingredients: recipe.ingredients,
+                draft: recipe.draft,
+                recipeImageJSON: recipe.recipeImageJSON
+            })
+        });
+        res.json(cleanProfile)
+    } catch (err) {
+        
+    }
+})
 
 module.exports = router
