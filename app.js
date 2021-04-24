@@ -9,7 +9,7 @@ app.use(middlewares.CORS);
 app.use(Express.json());
 
 app.use("/user", controllers.userController);
-// app.use("/recipe", controllers.recipeController);
+app.use("/recipe", controllers.recipeController);
 
 dbConnection.authenticate()
     .then(() => dbConnection.sync())

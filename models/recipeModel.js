@@ -53,7 +53,7 @@ const Recipe = db.define("recipe", {
         }
     },
     prepTime: {
-        type: DataTypes.TIME,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
             notEmpty: {
