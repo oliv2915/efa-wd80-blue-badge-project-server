@@ -112,7 +112,7 @@ router.post("/login", async (req, res) => {
     }
 });
 /*
-    Get userprofile by username
+    Get profile by username
 */
 router.get("/profile/:username", async (req, res) => {
     // get access to the username
@@ -149,7 +149,46 @@ router.get("/profile/:username", async (req, res) => {
         });
         res.json(cleanProfile)
     } catch (err) {
-        
+        return res.status(500).json({message: "Unable to get the user profile"});
+    }
+});
+
+/*
+    Get user profile (private)
+*/
+router.get("/profile", validateSession, async (req, res) => {
+    try {
+        // find user record with recipes
+        const foundProfile = await UserModel.findOne({where:{username: req.user.username}, include: RecipeModel});
+        // build an cleanProfile that has the password and meta data fields removed
+        const cleanProfile = {
+            id: foundProfile.id,
+            firstName: foundProfile.firstName,
+            lastName: foundProfile.lastName,
+            username: foundProfile.username,
+            email: foundProfile.email,
+            aboutMe: foundProfile.aboutMe,
+            profileImageJSON: foundProfile.profileImageJSON,
+            recipes: []
+        }
+        // loop thru each ingredient and remove meta data fields
+        foundProfile.recipes.map((recipe) => {
+            cleanProfile.recipes.push({
+                id: recipe.id,
+                recipeName: recipe.recipeName,
+                recipeType: recipe.recipeType,
+                description: recipe.description,
+                cookingDirections: recipe.cookingDirections,
+                servings: recipe.servings,
+                prepTime: recipe.prepTime,
+                ingredients: recipe.ingredients,
+                draft: recipe.draft,
+                recipeImageJSON: recipe.recipeImageJSON
+            })
+        });
+        res.json(cleanProfile)
+    } catch (err) {
+        return res.status(500).json({message: "Unable to get your profile"});
     }
 })
 
