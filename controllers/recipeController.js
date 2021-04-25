@@ -152,8 +152,7 @@ router.get("/published", async (req, res) => {
         })
         return res.status(200).json(cleanRecipes);
     } catch (err) {
-        console.log(err)
         return res.status(500).json({message: "No published recipes found"});
     }
-})
+});
 module.exports = router;
