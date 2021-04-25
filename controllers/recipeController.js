@@ -2,6 +2,7 @@ const router = require("express").Router();
 const {RecipeModel, UserModel} = require('../models');
 const { UniqueConstraintError, ValidationError } = require("sequelize");
 const {validateSession} = require("../middleware");
+const { response } = require("express");
 
 /*
     Add recipe (private)
@@ -17,11 +18,14 @@ router.post("/add", validateSession, async (req, res) => {
     if (!(ingredients instanceof Array)) return res.status(400).json({message: "ingredients must be an array of strings"});
 
     try {
-        // add recipe
-        const createdRecipe = await RecipeModel.create({
+        const recipeObj = {
             recipeName, recipeType, description, cookingDirections,
             servings, prepTime, ingredients, userId: id
-        });
+        }
+        // Check to see if draft is false, and if so, adding it to the recipeObj
+        if (draft === false) recipeObj.draft = false;
+        // add recipe
+        const createdRecipe = await RecipeModel.create(recipeObj);
 
         res.status(201).json({
             message: "Recipe Added Successfully",
@@ -155,4 +159,30 @@ router.get("/published", async (req, res) => {
         return res.status(500).json({message: "No published recipes found"});
     }
 });
+
+/*
+Delete Recipe by ID 
+*/
+
+router.delete('/delete/:id', validateSession, async (req, res) => {
+    const userId = req.user.id;
+    const recipeId = req.params.id;
+    console.log(req.params);
+    if (!recipeId) return res.status(400).json({message: "Recipe ID is required"});
+
+    try {
+        const query = {
+            where: {
+                id: recipeId,
+            userId: userId
+            }
+        };
+
+        await RecipeModel.destroy(query);
+        return res.status(200).json({message: "Recipe Removed"});
+    } catch (err) {
+        return res.status(500).json({message: "Issue deleting recipe"});
+    }
+});
+
 module.exports = router;
