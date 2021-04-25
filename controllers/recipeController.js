@@ -123,8 +123,26 @@ router.put("/update/:id", validateSession, async (req, res) => {
 */
 router.get("/all", validateSession, async (req, res) => {
     try {
-        const foundRecipes = await RecipeModel.findAll({where:{userId: req.user.id}});
-        return res.status(200).json(foundRecipes);
+        const foundRecipes = await RecipeModel.findAll({where:{userId: req.user.id}, include: UserModel});
+        // for each recipe, return a clean copy that we can use
+        const cleanRecipes = [];
+        foundRecipes.forEach(recipe => {
+            cleanRecipes.push({
+                id: recipe.id,
+                recipeName: recipe.recipeName,
+                recipeType: recipe.recipeType,
+                description: recipe.description,
+                cookingDirections: recipe.cookingDirections,
+                servings: recipe.servings,
+                prepTime: recipe.prepTime,
+                ingredients: recipe.ingredients,
+                recipeImageURL: recipe.recipeImageURL,
+                user: {
+                    username: recipe.user.username
+                }
+            });
+        });
+        return res.status(200).json(cleanRecipes);
     } catch (err) {
         return res.status(500).json({message: "Can't get all recipes"});
     }
