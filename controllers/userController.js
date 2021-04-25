@@ -159,7 +159,7 @@ router.get("/profile/:username", async (req, res) => {
 router.get("/profile", validateSession, async (req, res) => {
     try {
         // find user record with recipes
-        const foundProfile = await UserModel.findOne({where:{username: req.user.username}, include: RecipeModel});
+        const foundProfile = await UserModel.findOne({where:{username: req.user.username}});
         // build an cleanProfile that has the password and meta data fields removed
         const cleanProfile = {
             id: foundProfile.id,
@@ -168,24 +168,8 @@ router.get("/profile", validateSession, async (req, res) => {
             username: foundProfile.username,
             email: foundProfile.email,
             aboutMe: foundProfile.aboutMe,
-            profileImageURL: foundProfile.profileImageURL,
-            recipes: []
+            profileImageURL: foundProfile.profileImageURL
         }
-        // loop thru each ingredient and remove meta data fields
-        foundProfile.recipes.map((recipe) => {
-            cleanProfile.recipes.push({
-                id: recipe.id,
-                recipeName: recipe.recipeName,
-                recipeType: recipe.recipeType,
-                description: recipe.description,
-                cookingDirections: recipe.cookingDirections,
-                servings: recipe.servings,
-                prepTime: recipe.prepTime,
-                ingredients: recipe.ingredients,
-                draft: recipe.draft,
-                recipeImageURL: recipe.recipeImageURL
-            })
-        });
         res.json(cleanProfile)
     } catch (err) {
         console.log(err)
