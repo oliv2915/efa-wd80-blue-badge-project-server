@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {RecipeModel} = require('../models');
+const {RecipeModel, UserModel} = require('../models');
 const { UniqueConstraintError, ValidationError } = require("sequelize");
 const {validateSession} = require("../middleware");
 
@@ -36,7 +36,7 @@ router.post("/add", validateSession, async (req, res) => {
                 ingredients: createdRecipe.ingredients,
                 draft: createdRecipe.draft,
                 createdAt: createdRecipe.createdAt,
-                recipeImageJSON: createdRecipe.recipeImageJSON
+                recipeImageURL: createdRecipe.recipeImageURL
             }
         })
     } catch (err) {
@@ -103,7 +103,7 @@ router.put("/update/:id", validateSession, async (req, res) => {
                 draft: recipe.draft,
                 createdAt: recipe.createdAt,
                 updatedAt: recipe.updatedAt,
-                recipeImageJSON: recipe.recipeImageJSON
+                recipeImageURL: recipe.recipeImageURL
             }
         });
     } catch (err) {
@@ -123,6 +123,37 @@ router.get("/all", validateSession, async (req, res) => {
         return res.status(200).json(foundRecipes);
     } catch (err) {
         return res.status(500).json({message: "Can't get all recipes"});
+    }
+});
+/*
+    Get all published recipes (public)
+*/
+router.get("/published", async (req, res) => {
+    try {
+        // only search for recipes that are published draft = false, we also need the user.username
+        const foundRecipes = await RecipeModel.findAll({where:{draft: false}, include: UserModel});
+        // for each recipe, return a clean copy that we can use
+        const cleanRecipes = [];
+        foundRecipes.forEach(recipe => {
+            cleanRecipes.push({
+                id: recipe.id,
+                recipeName: recipe.recipeName,
+                recipeType: recipe.recipeType,
+                description: recipe.description,
+                cookingDirections: recipe.cookingDirections,
+                servings: recipe.servings,
+                prepTime: recipe.prepTime,
+                ingredients: recipe.ingredients,
+                recipeImageURL: recipe.recipeImageURL,
+                user: {
+                    username: recipe.user.username
+                }
+            })
+        })
+        return res.status(200).json(cleanRecipes);
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({message: "No published recipes found"});
     }
 })
 module.exports = router;
