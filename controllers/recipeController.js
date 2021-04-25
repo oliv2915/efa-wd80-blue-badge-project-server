@@ -4,9 +4,9 @@ const { UniqueConstraintError, ValidationError } = require("sequelize");
 const {validateSession} = require("../middleware");
 
 /*
-    Add recipe
+    Add recipe (private)
 */
-router.post("/add", validateSession, async(req, res) => {
+router.post("/add", validateSession, async (req, res) => {
     // get the validated user id
     const {id} = req.user;
     // get access to all the arugments that we could expect to get
@@ -48,9 +48,8 @@ router.post("/add", validateSession, async(req, res) => {
     }
 
 });
-
 /*
-    Update recipe by id
+    Update recipe by id (private)
 */
 router.put("/update/:id", validateSession, async (req, res) => {
     if (!req.params.id) return res.status(400).json({message: "Recipe ID is required"});
@@ -115,6 +114,15 @@ router.put("/update/:id", validateSession, async (req, res) => {
         }
     }
 });
-
-
+/* 
+    Get user recipes (private)
+*/
+router.get("/all", validateSession, async (req, res) => {
+    try {
+        const foundRecipes = await RecipeModel.findAll({where:{userId: req.user.id}});
+        return res.status(200).json(foundRecipes);
+    } catch (err) {
+        return res.status(500).json({message: "Can't get all recipes"});
+    }
+})
 module.exports = router;

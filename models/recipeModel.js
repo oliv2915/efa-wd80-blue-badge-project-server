@@ -77,7 +77,7 @@ const Recipe = db.define("recipe", {
         defaultValue: true
     },
     recipeImageURL: {
-        type: DataTypes.JSON
+        type: DataTypes.STRING
     }
     
 },);
