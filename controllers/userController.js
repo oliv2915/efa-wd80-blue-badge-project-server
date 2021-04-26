@@ -111,13 +111,15 @@ router.get("/profile/:username", async (req, res) => {
         const foundProfile = await UserModel.findOne({where:{username: username}, include: RecipeModel});
         // build an cleanProfile that has the password and meta data fields removed
         const cleanProfile = {
-            id: foundProfile.id,
-            firstName: foundProfile.firstName,
-            lastName: foundProfile.lastName,
-            username: foundProfile.username,
-            email: foundProfile.email,
-            aboutMe: foundProfile.aboutMe,
-            profileImageURL: foundProfile.profileImageURL,
+            user: {
+                id: foundProfile.id,
+                firstName: foundProfile.firstName,
+                lastName: foundProfile.lastName,
+                username: foundProfile.username,
+                email: foundProfile.email,
+                aboutMe: foundProfile.aboutMe,
+                profileImageURL: foundProfile.profileImageURL
+            },
             recipes: []
         }
         // loop thru each ingredient and remove meta data fields
@@ -150,13 +152,15 @@ router.get("/profile", validateSession, async (req, res) => {
         const foundProfile = await UserModel.findOne({where:{username: req.user.username}});
         // build an cleanProfile that has the password and meta data fields removed
         const cleanProfile = {
-            id: foundProfile.id,
-            firstName: foundProfile.firstName,
-            lastName: foundProfile.lastName,
-            username: foundProfile.username,
-            email: foundProfile.email,
-            aboutMe: foundProfile.aboutMe,
-            profileImageURL: foundProfile.profileImageURL
+            user: {
+                id: foundProfile.id,
+                firstName: foundProfile.firstName,
+                lastName: foundProfile.lastName,
+                username: foundProfile.username,
+                email: foundProfile.email,
+                aboutMe: foundProfile.aboutMe,
+                profileImageURL: foundProfile.profileImageURL
+            }
         }
         res.json(cleanProfile)
     } catch (err) {

@@ -34,7 +34,7 @@ router.post("/", validateSession, async (req, res) => {
             // return the result
             return res.status(200).json({message: "Profile image upload success"});
         } catch (err) {
-            console.log(err);
+            return res.status(500).json({message: "Error uploading image"});
         }
     }
 
@@ -50,7 +50,7 @@ router.post("/", validateSession, async (req, res) => {
             // return a message
             return res.status(200).json({message: "Recipe image upload success"});
         } catch (err) {
-            console.log(err);
+            return res.status(500).json({message: "Error uploading image"});
         }
     }
 
