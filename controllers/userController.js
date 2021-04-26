@@ -20,12 +20,10 @@ router.post("/signup", async (req, res) => {
         username must be greater than 4 characters. One character must be a number or special character - validateUserName
         password must be greater then 6 characters. Password must contain a number and special character - validatePassword
     */
-    const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
-    const validatePassword = new RegExp("^.*(?=.{6,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
+    const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\[\]~-]).*$");
     // if username does not match our requirements, return an error.
     if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."})
-    // if password does not match our requirements, return an error
-    if (!validatePassword.test(password)) return res.status(400).json({message: "Password must be a mimimum of 6 characters, have one number, and one special character"})
+    if (password < 6) return res.status(400).json({message: "Password must be a mimimum of 6 characters"})
     /*
         At this point, password and username meet requirements and we have a the required user data
         Attempt to create the user in the database. As the same time, hash the user password
@@ -51,6 +49,7 @@ router.post("/signup", async (req, res) => {
                 email: createdUser.email,
                 firstName: createdUser.firstName,
                 lastName: createdUser.lastName,
+                profileImageURL: createdUser.profileImageURL,
                 createdAt: createdUser.createdAt
             },
             sessionToken: token
