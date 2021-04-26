@@ -175,7 +175,7 @@ router.put('/update/', validateSession, async (req, res) => {
     // get access to the information that will be passed
     let {username, email, password, firstName, lastName, aboutMe} = req.body.user;
     // check to see if we have the required fields
-    if (!username || !email || !password || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, First Name, and Last Name are required"});
+    // if (!username || !email || !password || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, First Name, and Last Name are required"});
 
     try {
         const query = {  // Query object targeting owner of the record.
