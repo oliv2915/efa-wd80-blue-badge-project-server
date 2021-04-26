@@ -10,20 +10,9 @@ const {validateSession} = require("../middleware");
 */
 router.post("/signup", async (req, res) => {
     // get access to all the properties that we will need to create a user
-    const {username, email, password, confirmPassword, firstName, lastName} = req.body.user;
+    const {username, email, password, firstName, lastName} = req.body.user;
     // check to see if the required fields have values, this is defined by the UserModel
-    if (!username || !email || !password || !confirmPassword || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, Confirm Password, First Name, and Last Name are required"});
-    // check to see if passwords and confirmPassword match, if not return a message
-    if (password !== confirmPassword) return res.status(400).json({message: "Passwords do not match"})
-    /*
-                            Username and Password Validation Checks
-        username must be greater than 4 characters. One character must be a number or special character - validateUserName
-        password must be greater then 6 characters. Password must contain a number and special character - validatePassword
-    */
-    const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\[\]~-]).*$");
-    // if username does not match our requirements, return an error.
-    if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."})
-    if (password < 6) return res.status(400).json({message: "Password must be a mimimum of 6 characters"})
+    if (!username || !email || !password || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, First Name, and Last Name are required"});
     /*
         At this point, password and username meet requirements and we have a the required user data
         Attempt to create the user in the database. As the same time, hash the user password
@@ -180,22 +169,9 @@ router.get("/profile", validateSession, async (req, res) => {
 */
 router.put('/update/', validateSession, async (req, res) => {
     // get access to the information that will be passed
-    let {username, email, password, confirmPassword, firstName, lastName, aboutMe} = req.body.user;
+    let {username, email, password, firstName, lastName, aboutMe} = req.body.user;
     // check to see if we have the required fields
-    if (!username || !email || !password || !confirmPassword || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, Confirm Password, First Name, and Last Name are required"});
-    // check to see if the passwords match
-    if (password !== confirmPassword) return res.status(400).json({message: "Passwords do not match"});
-    /*
-                            Username and Password Validation Checks
-        username must be greater than 4 characters. One character must be a number or special character - validateUserName
-        password must be greater then 6 characters. Password must contain a number and special character - validatePassword
-    */
-    const validateUserName = new RegExp("^.*(?=.{4,128})(?=.*[0-9])|(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
-    const validatePassword = new RegExp("^.*(?=.{6,128})(?=.*[0-9])(?=.*[!@#$%&*()_+=|<>?{}\\[\\]~-]).*$");
-    // if username does not match our requirements, return an error.
-    if (!validateUserName.test(username)) return res.status(400).json({message: "Username must be a minimum of 4 characters, have one number or special charcter."});
-    // if password does not match our requirements, return an error
-    if (!validatePassword.test(password)) return res.status(400).json({message: "Password must be a mimimum of 6 characters, have one number, and one special character"});
+    if (!username || !email || !password || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, First Name, and Last Name are required"});
 
     try {
         const query = {  // Query object targeting owner of the record.
