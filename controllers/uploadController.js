@@ -13,7 +13,7 @@ router.post("/", validateSession, async (req, res) => {
     const uploadImage = async (buffer) => {
         return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream({
-                upload_preset: "development_images"
+                upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
             }, (error, result) => {
                 if (result) resolve(result);
                 else reject(error)
