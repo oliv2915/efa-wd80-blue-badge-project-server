@@ -20,10 +20,8 @@ router.post("/add", validateSession, async (req, res) => {
     try {
         const recipeObj = {
             recipeName, recipeType, description, cookingDirections,
-            servings, prepTime, ingredients, userId: id
+            servings, prepTime, ingredients, userId: id, draft
         }
-        // Check to see if draft is false, and if so, adding it to the recipeObj
-        if (draft === false) recipeObj.draft = false;
         // add recipe
         const createdRecipe = await RecipeModel.create(recipeObj);
 
@@ -123,7 +121,11 @@ router.put("/update/:id", validateSession, async (req, res) => {
 */
 router.get("/all", validateSession, async (req, res) => {
     try {
-        const foundRecipes = await RecipeModel.findAll({where:{userId: req.user.id}, include: UserModel});
+        const foundRecipes = await RecipeModel.findAll({
+            where:{userId: req.user.id},
+            include: UserModel,
+            order: [["updatedAt", "DESC"]]
+        });
         // for each recipe, return a clean copy that we can use
         const cleanRecipes = [];
         foundRecipes.forEach(recipe => {
@@ -153,7 +155,11 @@ router.get("/all", validateSession, async (req, res) => {
 router.get("/published", async (req, res) => {
     try {
         // only search for recipes that are published draft = false, we also need the user.username
-        const foundRecipes = await RecipeModel.findAll({where:{draft: false}, include: UserModel});
+        const foundRecipes = await RecipeModel.findAll({
+            where:{draft: false},
+            include: UserModel,
+            order: [["updatedAt", "DESC"]]
+        });
         // for each recipe, return a clean copy that we can use
         const cleanRecipes = [];
         foundRecipes.forEach(recipe => {
