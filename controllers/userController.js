@@ -10,7 +10,7 @@ const {validateSession} = require("../middleware");
 */
 router.post("/signup", async (req, res) => {
     // get access to all the properties that we will need to create a user
-    const {username, email, password, firstName, lastName} = req.body.user;
+    const {username, email, password, firstName, lastName, aboutMe} = req.body.user;
     // check to see if the required fields have values, this is defined by the UserModel
     if (!username || !email || !password || !firstName || !lastName) return res.status(400).json({message: "Username, Email, Password, First Name, and Last Name are required"});
     /*
@@ -24,7 +24,8 @@ router.post("/signup", async (req, res) => {
             email,
             password: bcrypt.hashSync(password, 13), // hash user password before it is saved to the database
             firstName,
-            lastName
+            lastName,
+            aboutMe
         });
         
         // create a sessionToken for the user
@@ -38,6 +39,7 @@ router.post("/signup", async (req, res) => {
                 email: createdUser.email,
                 firstName: createdUser.firstName,
                 lastName: createdUser.lastName,
+                aboutMe: createdUser.aboutMe,
                 profileImageURL: createdUser.profileImageURL,
                 createdAt: createdUser.createdAt
             },
