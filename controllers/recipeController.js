@@ -138,6 +138,7 @@ router.get("/all", validateSession, async (req, res) => {
                 servings: recipe.servings,
                 prepTime: recipe.prepTime,
                 ingredients: recipe.ingredients,
+                draft: recipe.draft,
                 recipeImageURL: recipe.recipeImageURL,
                 user: {
                     username: recipe.user.username
