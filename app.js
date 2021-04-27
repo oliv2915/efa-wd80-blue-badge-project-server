@@ -5,9 +5,9 @@ const fileUpload = require("express-fileupload");
 const controllers = require("./controllers");
 const dbConnection = require("./db");
 const middlewares = require("./middleware");
-const path = require("path");
+const cors = require("cors");
 
-app.use(middlewares.CORS);
+app.use(cors());
 app.use(Express.json());
 app.use(Express.urlencoded({extended: false, limit: "25mb"}));
 app.use(fileUpload());
