@@ -27,7 +27,7 @@ router.post("/add", validateSession, async (req, res) => {
         // add recipe
         const createdRecipe = await RecipeModel.create(recipeObj);
 
-        res.status(201).json({
+        return res.status(201).json({
             message: "Recipe Added Successfully",
             recipe: {
                 id: createdRecipe.id,
