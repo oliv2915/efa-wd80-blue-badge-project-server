@@ -127,7 +127,7 @@ router.get("/all", validateSession, async (req, res) => {
             order: [["updatedAt", "DESC"]]
         });
         // for each recipe, return a clean copy that we can use
-        const cleanRecipes = [];
+        let cleanRecipes = [];
         foundRecipes.forEach(recipe => {
             cleanRecipes.push({
                 id: recipe.id,
@@ -145,6 +145,33 @@ router.get("/all", validateSession, async (req, res) => {
                 }
             });
         });
+
+        if (req.query.ingredients) {
+            const queryStrings = req.query.ingredients;
+            const filteredRecipes = [];
+            const filtered = [];
+            
+            cleanRecipes.map((recipe) => {
+                const ingredients = recipe.ingredients.toString().toLowerCase();
+                queryStrings.map((string) => {
+                    if(ingredients.includes(string.toLowerCase())) filtered.push(recipe)
+                })
+            })
+            
+            const newObj = {};
+
+            for (let i in filtered) {
+                objId = filtered[i]["id"];
+                newObj[objId] = filtered[i];
+            }
+
+            for (i in newObj) {
+                filteredRecipes.push(newObj[i]);
+            }
+
+            cleanRecipes = filteredRecipes;
+        }
+
         return res.status(200).json(cleanRecipes);
     } catch (err) {
         return res.status(500).json({message: "Can't get all recipes"});
