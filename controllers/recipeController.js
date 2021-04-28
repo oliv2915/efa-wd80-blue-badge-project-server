@@ -162,7 +162,7 @@ router.get("/published", async (req, res) => {
             order: [["updatedAt", "DESC"]]
         });
         // for each recipe, return a clean copy that we can use
-        const cleanRecipes = [];
+        let cleanRecipes = [];
         foundRecipes.forEach(recipe => {
             cleanRecipes.push({
                 id: recipe.id,
@@ -179,8 +179,37 @@ router.get("/published", async (req, res) => {
                 }
             })
         })
+        
+        if (req.query.ingredients) {
+            const queryStrings = req.query.ingredients;
+            const filteredRecipes = [];
+            const filtered = [];
+            
+            cleanRecipes.map((recipe) => {
+                const ingredients = recipe.ingredients.toString().toLowerCase();
+                queryStrings.map((string) => {
+                    if(ingredients.includes(string.toLowerCase())) filtered.push(recipe)
+                })
+            })
+            
+            const newObj = {};
+
+            for (let i in filtered) {
+                objId = filtered[i]["id"];
+                newObj[objId] = filtered[i];
+            }
+
+            for (i in newObj) {
+                filteredRecipes.push(newObj[i]);
+            }
+
+            cleanRecipes = filteredRecipes;
+        }
+
+
         return res.status(200).json(cleanRecipes);
     } catch (err) {
+        console.log(err)
         return res.status(500).json({message: "No published recipes found"});
     }
 });
@@ -192,7 +221,6 @@ Delete Recipe by ID
 router.delete('/delete/:id', validateSession, async (req, res) => {
     const userId = req.user.id;
     const recipeId = req.params.id;
-    console.log(req.params);
     if (!recipeId) return res.status(400).json({message: "Recipe ID is required"});
 
     try {
