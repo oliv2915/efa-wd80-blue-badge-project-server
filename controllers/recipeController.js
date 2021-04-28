@@ -188,7 +188,7 @@ router.get("/published", async (req, res) => {
             cleanRecipes.map((recipe) => {
                 const ingredients = recipe.ingredients.toString().toLowerCase();
                 queryStrings.map((string) => {
-                    if(ingredients.includes(string)) filtered.push(recipe)
+                    if(ingredients.includes(string.toLowerCase())) filtered.push(recipe)
                 })
             })
             
