@@ -4,7 +4,6 @@ const app = Express();
 const fileUpload = require("express-fileupload");
 const controllers = require("./controllers");
 const dbConnection = require("./db");
-const middlewares = require("./middleware");
 const cors = require("cors");
 
 app.use(cors());
