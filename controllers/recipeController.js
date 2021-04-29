@@ -59,7 +59,7 @@ router.put("/update/:id", validateSession, async (req, res) => {
     const {recipeName, recipeType, description, cookingDirections, servings, prepTime, ingredients, draft} = req.body.recipe;
     if (!recipeName || !recipeType || !description || !cookingDirections || !servings || !prepTime || !ingredients) return res.status(400).json({message: "recipeName, recipeType, description, cookingDirections, servings, prepTime, and ingredients are required"});
     // check to see if the ingrendients is an array
-    if (!(ingredients instanceof Array)) return res.status({message: "ingredients must be an array of strings"});
+    if (!(ingredients instanceof Array)) return res.status(400).json({message: "ingredients must be an array of strings"});
     // build a query obj
     const query = {
         where: {
